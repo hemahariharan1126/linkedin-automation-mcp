@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "linkedin-automation": {
+      "command": "node",
+      "args": ["src/index.mjs"],
+      "env": {
+        "LINKEDIN_ACCESS_TOKEN": "${LINKEDIN_ACCESS_TOKEN}"
+      }
+    }
+  }
+}

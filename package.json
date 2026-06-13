@@ -1,0 +1,25 @@
+{
+  "name": "linkedin-automation-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for LinkedIn automation using Linked API",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.mjs",
+    "dev": "node src/index.mjs",
+    "test": "node test/mock-test.cjs"
+  },
+  "keywords": ["mcp", "linkedin", "automation"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@linkedapi/node": "^1.2.19",
+    "@modelcontextprotocol/sdk": "^1.0.3",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0"
+  }
+}
