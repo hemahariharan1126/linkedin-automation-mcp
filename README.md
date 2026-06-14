@@ -6,7 +6,7 @@
 [![License: ISC](https://img.shields.io/badge/License-ISC-yellow.svg)](https://opensource.org/licenses/ISC)
 [![Node.js](https://img.shields.io/badge/Node.js-20.x-green.svg)](https://nodejs.org/)
 
-An advanced **Model Context Protocol (MCP)** server for automating LinkedIn tasks using the Linked API. Connect AI agents seamlessly to your professional network.
+An advanced **Model Context Protocol (MCP)** server for automating LinkedIn tasks using the Linkedin API. Connect AI agents seamlessly to your professional network.
 
 </div>
 
@@ -23,7 +23,7 @@ An advanced **Model Context Protocol (MCP)** server for automating LinkedIn task
 ## 🛠 Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- A **Linked API** account and API key.
+- A **Linkedin API** account and API key.
 
 ## 📦 Installation
 
