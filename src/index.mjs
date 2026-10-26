@@ -8,11 +8,13 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import linkedin from './linkedin-api.js';
 
+import { fileURLToPath } from 'url';
+
 // Environment
 const ACCESS_TOKEN = process.env.LINKEDIN_ACCESS_TOKEN;
 
 // MCP Server
-class LinkedInMCPServer extends Server {
+export class LinkedInMCPServer extends Server {
   constructor() {
     super({
       name: 'linkedin-automation',
@@ -139,6 +141,17 @@ class LinkedInMCPServer extends Server {
             },
           },
         },
+        {
+          name: 'linkedin_post_delete',
+          description: 'Delete a LinkedIn post by its ID/URN',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              postId: { type: 'string', description: 'The URN or ID of the post to delete' },
+            },
+            required: ['postId'],
+          },
+        },
       ],
     }));
 
@@ -170,6 +183,8 @@ class LinkedInMCPServer extends Server {
             return await this.handlePersonSearch(args);
           case 'linkedin_my_posts':
             return await this.handleMyPosts(args);
+          case 'linkedin_post_delete':
+            return await this.handlePostDelete(args);
           default:
             throw new Error(`Unknown tool: ${name}`);
         }
@@ -230,13 +245,27 @@ class LinkedInMCPServer extends Server {
     const result = await linkedin.getUserPosts(args.limit || 10);
     return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
   }
+
+  async handlePostDelete(args) {
+    const result = await linkedin.deletePost(args.postId);
+    return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+  }
 }
 
-// Run
-async function main() {
+// Run when called directly (e.g. node src/index.mjs for stdio transport)
+export async function main() {
   const server = new LinkedInMCPServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }
 
-main().catch(console.error);
+const isDirectRun = process.argv[1] && (
+  process.argv[1].endsWith('index.mjs') ||
+  process.argv[1].endsWith('index.js')
+);
+
+if (isDirectRun) {
+  main().catch(console.error);
+}
+
+export default LinkedInMCPServer;

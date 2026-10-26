@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: linkedin-automation-mcp
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run start:sse
+    healthCheckPath: /health
+    envVars:
+      - key: LINKEDIN_ACCESS_TOKEN
+        sync: false

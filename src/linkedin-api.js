@@ -370,6 +370,11 @@ async function reactToPost(postId, reactionType = 'LIKE') {
   return linkedInRequest('/socialActions', 'POST', reactionData);
 }
 
+// 13. Delete Post
+async function deletePost(postId) {
+  return linkedInRequest(`/posts/${encodeURIComponent(postId)}`, 'DELETE');
+}
+
 // Export for MCP server
 export default {
   createPost,
@@ -384,6 +389,7 @@ export default {
   searchPeople,
   getUserPosts,
   reactToPost,
+  deletePost,
   // Media upload helpers (exported for testing)
   detectFileType,
   uploadImage,
