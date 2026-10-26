@@ -97,6 +97,9 @@ This server includes built-in support for **Server-Sent Events (SSE)** and healt
 
 Once deployed, Render gives you a public URL (e.g. `https://linkedin-automation-mcp.onrender.com`).
 
+### 🛡️ Automatic Free-Tier Keep-Alive
+Render's free tier spins down services after 15 minutes of inactivity. This server includes an **autonomous self-pinger** that detects Render's `RENDER_EXTERNAL_URL` and automatically sends a lightweight ping to `/health` every 13 minutes. This keeps your MCP server awake 24/7 without needing external cron jobs.
+
 ### Connecting AI Clients to your Cloud MCP Server
 Point any SSE-compatible MCP client to your remote URL:
 - **SSE URL**: `https://<your-service>.onrender.com/sse`

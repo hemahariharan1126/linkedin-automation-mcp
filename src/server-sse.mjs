@@ -121,6 +121,38 @@ const server = http.createServer(async (req, res) => {
   res.end(JSON.stringify({ error: `Not found: ${pathname}` }));
 });
 
+// Keep-Alive Self-Pinger for Render Free Tier (pings every 13 minutes)
+let keepAliveTimer = null;
+const externalUrl = process.env.RENDER_EXTERNAL_URL || process.env.SELF_PING_URL;
+const pingIntervalMs = Number(process.env.KEEP_ALIVE_INTERVAL_MS) || (13 * 60 * 1000); // 13 minutes
+
+function startKeepAlive() {
+  if (!externalUrl) {
+    console.log('ℹ️  KeepAlive: No RENDER_EXTERNAL_URL or SELF_PING_URL set (inactive in local dev).');
+    return;
+  }
+
+  const targetUrl = `${externalUrl.replace(/\/$/, '')}/health`;
+  console.log(`⏱️  KeepAlive: Active. Pinging ${targetUrl} every ${Math.round(pingIntervalMs / 60000)} min to prevent Render idle spin-down.`);
+
+  keepAliveTimer = setInterval(async () => {
+    try {
+      const resp = await fetch(targetUrl);
+      if (resp.ok) {
+        console.log(`[KeepAlive] Ping successful: HTTP ${resp.status} at ${new Date().toLocaleTimeString()}`);
+      } else {
+        console.warn(`[KeepAlive] Ping warning: HTTP ${resp.status}`);
+      }
+    } catch (err) {
+      console.warn(`[KeepAlive] Ping failed: ${err.message}`);
+    }
+  }, pingIntervalMs);
+
+  if (keepAliveTimer.unref) {
+    keepAliveTimer.unref();
+  }
+}
+
 // Start listening
 server.listen(PORT, () => {
   console.log('====================================================');
@@ -129,11 +161,15 @@ server.listen(PORT, () => {
   console.log(`🩺 Health check URL: http://localhost:${PORT}/health`);
   console.log(`⚡ SSE URL:          http://localhost:${PORT}/sse`);
   console.log('====================================================');
+  startKeepAlive();
 });
 
 // Graceful termination
 const shutdown = () => {
   console.log('Shutting down HTTP server...');
+  if (keepAliveTimer) {
+    clearInterval(keepAliveTimer);
+  }
   server.close(() => {
     console.log('Server stopped.');
     process.exit(0);
@@ -141,3 +177,4 @@ const shutdown = () => {
 };
 process.on('SIGTERM', shutdown);
 process.on('SIGINT', shutdown);
+
